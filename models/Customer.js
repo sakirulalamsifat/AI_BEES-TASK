@@ -24,7 +24,7 @@ const Customer = db.define('Customer', {
         allowNull: false
     },
     postcode: {
-        type: DataTypes.NUMBER,
+        type: DataTypes.REAL,
         allowNull:false
     }
 

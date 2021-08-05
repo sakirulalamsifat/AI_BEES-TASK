@@ -15,13 +15,13 @@ const registerCustomer = asyncHandler(async (req, res) => {
   
     if (customer) {
       res.status(201).json({
-        _id: user._id,
+        _id: customer._id,
         mobile: customer.mobile,
           firstName: customer.firstName,
           lastName: customer.lastName,
         postcode:customer.postcode,
         
-        token: generateToken(user._id),
+        token: generateToken(customer._id),
       })
     } else {
       res.status(400)
