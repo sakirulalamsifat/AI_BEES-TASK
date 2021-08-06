@@ -16,8 +16,15 @@ const Customer = db.define('Customer', {
         allowNull: false
     },
     mobile: {
-        type: DataTypes.STRING,
-        allowNull: false
+        type: DataTypes.REAL,
+        allowNull: false,
+        validate: {
+            isNumber(value) {
+              if (value.length <=12) {
+                throw new Error('Phone Must be 10 to 12 Number');
+              }
+            }
+          }
     },
     address: {
         type: DataTypes.STRING,

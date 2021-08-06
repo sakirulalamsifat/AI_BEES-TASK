@@ -17,13 +17,37 @@ const User = db.define('User', {
     },
     userName: {
         type: DataTypes.STRING,
-      allowNull:false
+      allowNull: false,
+      validate: {
+        isSix(value) {
+          if (value.length < 6) {
+            throw new Error('userName Must be bigger then 6 letters');
+          }
+        }
+      }
     },
     password:{
         type: DataTypes.STRING,
-      allowNull:false
+      allowNull: false,
+      validate: {
+        isSix(value) {
+          if (value.length < 8) {
+            throw new Error('Password minimum 8 charecter ');
+          }
+        }
+      }
     }
-});
+},{hooks: {
+  beforeCreate: (user) => {
+    const salt = bcrypt.genSaltSync();
+    user.password = bcrypt.hashSync(user.password, salt);
+  }
+},
+instanceMethods: {
+  validPassword: function(password) {
+    return bcrypt.compareSync(password, this.password);
+  }
+}   });
   
   // `sequelize.define` also returns the model
   User.sync().then(() => {

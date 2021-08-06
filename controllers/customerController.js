@@ -7,7 +7,12 @@ import Customer from '../models/Customer.js'
 const registerCustomer = asyncHandler(async (req, res) => {
     const { mobile, firstName, lastName, address,postcode } = req.body
   
-
+    const customerExists = await Customer.findOne({ where:{mobile}  })
+  
+    if (customerExists) {
+      res.status(400)
+      throw new Error('customer already exists')
+    }
   
     const customer = await Customer.create({
         mobile, firstName, lastName, address,postcode

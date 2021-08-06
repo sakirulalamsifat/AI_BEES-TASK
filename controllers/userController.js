@@ -6,15 +6,15 @@ import bcrypt from 'bcrypt'
 const authUser = asyncHandler(async (req, res) => {
     const { userName, password } = req.body
   
-    const user = await User.findOne({ where: { userName }})
+    const user = await User.findOne({ where:{userName}})
    
-        if (user && password===user.password) {
+        if (user && bcrypt.compare(password,user.password)) {
             res.json({
-                _id: user._id,
+                _id: user.id,
                 userName: user.userName,
                 firstName: user.firstName,
                 lastName: user.lastName,
-                token: generateToken(user._id),
+                token: generateToken(user.id),
             })
         }
     
@@ -47,12 +47,12 @@ const registerUser = asyncHandler(async (req, res) => {
   
     if (user) {
       res.status(201).json({
-        _id: user._id,
+        _id: user.id,
         userName: user.userName,
           firstName: user.firstName,
         lastName:user.lastName,
         
-        token: generateToken(user._id),
+        token: generateToken(user.id),
       })
     } else {
       res.status(400)
