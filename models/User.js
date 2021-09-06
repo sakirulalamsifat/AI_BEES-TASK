@@ -1,56 +1,45 @@
-import pkg from 'sequelize';
-
-import db from '../config/db.js'
+import mongoose from 'mongoose'
 import bcrypt from 'bcryptjs'
 
-const { Sequelize, DataTypes } = pkg;
+const userSchema = mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    isAdmin: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+  },
+  {
+    timestamps: true,
+  }
+)
 
-const User = db.define('User', {
-    // Model attributes are defined here
-    firstName: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    lastName: {
-      type: DataTypes.STRING,
-      allowNull:false
-    },
-    userName: {
-        type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        isSix(value) {
-          if (value.length < 6) {
-            throw new Error('userName Must be bigger then 6 letters');
-          }
-        }
-      }
-    },
-    password:{
-        type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        isSix(value) {
-          if (value.length < 8) {
-            throw new Error('Password minimum 8 charecter ');
-          }
-        }
-      }
-    }
-},{hooks: {
-  beforeCreate: (user) => {
-    const salt = bcrypt.genSaltSync();
-    user.password = bcrypt.hashSync(user.password, salt);
+userSchema.methods.matchPassword = async function (enteredPassword) {
+  return await bcrypt.compare(enteredPassword, this.password)
+}
+
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) {
+    next()
   }
-},
-instanceMethods: {
-  validPassword: function(password) {
-    return bcrypt.compareSync(password, this.password);
-  }
-}   });
-  
-  // `sequelize.define` also returns the model
-  User.sync().then(() => {
-    console.log('table created');
-  });
- export default User
+
+  const salt = await bcrypt.genSalt(10)
+  this.password = await bcrypt.hash(this.password, salt)
+})
+
+const User = mongoose.model('User', userSchema)
+
+export default User

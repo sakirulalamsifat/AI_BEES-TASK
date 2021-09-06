@@ -7,7 +7,7 @@ import {
 import {addUserValidators} from '../validator/userValidator.js'
 import { protect, admin } from '../middleware/authMiddleware.js'
 
-router.route('/').post(addUserValidators,registerUser)
+router.route('/').post(registerUser)
 router.post('/login', authUser)
 
 export default router

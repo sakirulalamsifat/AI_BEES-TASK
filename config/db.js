@@ -1,19 +1,18 @@
+import mongoose from 'mongoose'
 
-import Sequelize from 'sequelize'
-import dotenv from 'dotenv'
+const connectDB = async () => {
+  try {
+    const conn = await mongoose.connect(process.env.MONGO_URL, {
+      useUnifiedTopology: true,
+      useNewUrlParser: true,
+      useCreateIndex: true,
+    })
 
-dotenv.config();
+    console.log(`MongoDB Connected: ${conn.connection.host}`)
+  } catch (error) {
+    console.error(`Error: ${error.message}`)
+    process.exit(1)
+  }
+}
 
-const db =  new Sequelize(process.env.DATABASE_URL, {
-  host: 'localhost',
-  dialect: 'postgres',
-  operatorsAliases: false,
-
-  pool: {
-    max: 5,
-    min: 0,
-    acquire: 30000,
-    idle: 10000
-  },
-})
-export default  db 
+export default connectDB

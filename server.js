@@ -4,10 +4,14 @@ import dotenv from 'dotenv'
 
 import morgan from 'morgan'
 import { notFound, errorHandler } from './middleware/errorMiddleware.js'
-import  db  from './config/db.js'
+import db from './config/db.js'
+import connectDB from './config/db.js'
 
 import userRoutes from './routes/userRoutes.js'
-import customerRoutes from './routes/customerRoutes.js'
+import categoryRoutes from './routes/categoryRoutes.js'
+import subCategoryRoutes from './routes/subcategoryRoutes.js'
+import productRoutes from './routes/productRoutes.js'
+
 
 
 
@@ -15,10 +19,7 @@ dotenv.config()
 // Database
 
 
-// Test DB
-db.authenticate()
-  .then(() => console.log('Database connected...'))
-  .catch(err => console.log('Error: ' + err))
+connectDB()
 
 
 
@@ -31,7 +32,10 @@ if (process.env.NODE_ENV === 'development') {
 app.use(express.json())
 
 app.use('/user', userRoutes)
-app.use('/customer',customerRoutes)
+app.use('/category', categoryRoutes)
+app.use('/subcategory', subCategoryRoutes)
+app.use('/product', productRoutes)
+
 
 
 
